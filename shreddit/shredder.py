@@ -1,13 +1,10 @@
 import arrow
-import argparse
 import json
 import logging
 import os
 import praw
-import sys
 import time
-import yaml
-from datetime import datetime, timedelta
+from datetime import timedelta
 from praw.models import Comment, Submission
 from prawcore.exceptions import ResponseException, OAuthException, BadRequest
 from re import sub
@@ -18,6 +15,7 @@ class Shredder(object):
     """This class stores state for configuration, API objects, logging, etc. It exposes a shred() method that
     application code can call to start it.
     """
+
     def __init__(self, config, user):
         logging.basicConfig()
         self._logger = logging.getLogger("shreddit")
@@ -49,7 +47,6 @@ class Shredder(object):
             multireddit = self._r.multireddit(username, multiname)
             for subreddit in multireddit.subreddits:
                 self._blacklist.add(str(subreddit).lower())
-
 
         self._logger.info("Deleting ALL items before {}".format(self._nuke_cutoff))
         self._logger.info("Deleting items not whitelisted until {}".format(self._recent_cutoff))
@@ -188,3 +185,4 @@ class Shredder(object):
             return item.controversial(limit=None)
         else:
             raise ShredditError("Sorting \"{}\" not recognized.".format(self._sort))
+
